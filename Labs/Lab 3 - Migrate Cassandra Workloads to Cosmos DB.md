@@ -20,7 +20,7 @@
 
 # Lab 3: Migrate Cassandra Workloads to Cosmos DB
 
-In this lab, you'll migrate two datasets from Cassandra to Cosmos DB. You'll move the data in two ways. First, you'll export the data from Cassandra and use the **CQLSH COPY** command to import the database into Cosmos DB. Then, you'll migrate the data using Spark. You'll verify that migration was successful by running an application that queries data held in the original Cassandra database, and then reconfiguring the application to connect to Cosmos DB. The results of running the reconfigured application should remain the same.
+In this lab, you'll migrate two datasets from Cassandra to Cosmos DB. You'll move the data in two ways. First, you'll export the data from Cassandra and use the **CQLSH COPY** command to import the database into Cosmos DB. Then, you'll migrate the data using Spark. You'll verify that migration was successful by running queries against the data held in the Cosmos DB database. 
 
 The scenario for this lab concerns an ecommerce system. Customers can place orders for goods. The customer and order details are recorded in a Cassandra database. 
 
