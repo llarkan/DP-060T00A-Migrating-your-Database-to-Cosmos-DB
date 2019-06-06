@@ -93,7 +93,7 @@ In the first exercise, you'll create the Cassandra database for holding the cust
     | Subnet | default |
     | Public IP | (new) cassandraserver-ip |
     | NIC network security group | Advanced |
-    ! Configure network security group | (new) cassandraserver-nsg |
+    | Configure network security group | (new) cassandraserver-nsg |
     | Accelerated networking | Off |
     | Load balancing | No |
 
@@ -144,14 +144,14 @@ In the first exercise, you'll create the Cassandra database for holding the cust
     scp *.* azureuser@<ip address>:~
     ```
 
-8. At the **Password** prompt, enter the password **Pa55w.rdPa55w.rd**
-9. Type the following command to connect to the **cassandraserver** virtual machine. Specify the IP address of the **cassandraserver** virtual machine:
+8. At the prompt, type **yes** to continue connecting.
+9. At the **Password** prompt, enter the password **Pa55w.rdPa55w.rd**
+10. Type the following command to connect to the **cassandraserver** virtual machine. Specify the IP address of the **cassandraserver** virtual machine:
 
     ```bash
     ssh azureuser@<ip address>
     ```
 
-10. At the prompt, type **yes** to continue connecting.
 11. At the **Password** prompt, enter the password **Pa55w.rdPa55w.rd**
 12. Run the following command to connect to the Cassandra database, create the tables required by this lab, and populate them.
 
