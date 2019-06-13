@@ -42,31 +42,31 @@ In the first exercise, you'll create the MongoDB database for holding the data c
 
 4. Click **Create**, and wait for the resource group to be created.
 5. In the left-hand pane of the Azure portal, click **+ Create a resource**.
-6. On the **New** page, click **Networking**, and then click **Virtual network**.
-7. On the **Create virtual network** page, enter the following details, and then click **Create**:
+6. On the **New** page, in the **Search the Marketplace** box, type **Virtual Network**, and press Enter.
+7. On the **Virtual Network** page, click **Create**.
+8. On the **Create virtual network** page, enter the following details, and then click **Create**:
 
     | Property  | Value  |
     |---|---|
     | Name | databasevnet |
-    | Address space | Accept the default address space and range |
+    | Address space | 10.0.0.0/24 |
     | Subscription | *\<your-subscription\>* |
     | Resource Group | mongodbrg |
     | Region | Select the same location that you specified for the resource group |
     | Subnet Name | default |
-    | Subnet Address range | Accept the default address space and range |
+    | Subnet Address range | 10.0.0.0/28 |
     | DDos protection | Basic |
     | Service endpoints | Disabled |
     | Firewall | Disabled |
 
-8. Wait for the virtual network to be created before continuing.
+9. Wait for the virtual network to be created before continuing.
 
 ### Task 2: Create a MongoDB Database Server
 
 1. In the left-hand pane of the Azure portal, click **+ Create a resource**.
-2. In the **Search** box, type **Bitnami MongoDB**, and then press Enter.
-3. On the **Get Started** page, click **MongoDB Certified by Bitnami**.
-4. On the **MongoDB Certified by Bitnami** page, click **Create**.
-5. On the **Create a virtual machine** page, enter the following details, and then click **Next: Disks \>**.
+2. In the **Search the Marketplace** box, type ***MongoDB Certified by Bitnami**, and then press Enter.
+3. On the **MongoDB Certified by Bitnami** page, click **Create**.
+4. On the **Create a virtual machine** page, enter the following details, and then click **Next: Disks \>**.
 
     | Property  | Value  |
     |---|---|
@@ -82,29 +82,29 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     | Password | Pa55w.rdPa55w.rd |
     | Confirm password | Pa55w.rdPa55w.rd |
 
-6. On the **Disks** page, accept the default settings, and then click **Next: Networking \>**.
-7. On the **Networking** page, enter the following details, and then click **Next: Management \>**.
+5. On the **Disks** page, accept the default settings, and then click **Next: Networking \>**.
+6. On the **Networking** page, enter the following details, and then click **Next: Management \>**.
 
     | Property  | Value  |
     |---|---|
     | Virtual network | databasevnet |
-    | Subnet | default |
+    | Subnet | default (10.0.0.0/28) |
     | Public IP | (new) mongodbserver-ip |
     | NIC network security group | Advanced |
     ! Configure network security group | (new) mongodbserver-nsg |
     | Accelerated networking | Off |
     | Load balancing | No |
 
-8. On the **Management** page, accept the default settings, and then click **Next: Advanced \>**.
-9. On the **Advanced** page, accept the default settings, and then click **Next: Tags \>**.
-10. On the **Tags** page, accept the default settings, and then click **Next: Review + create \>**.
-11. On the validation page, click **Create**.
-12. Wait for the virtual machine to be deployed before continuing
-13. In the left-hand pane of the Azure portal, click **All resources**.
-14. On the **All resources** page, click **mongodbserver-nsg**.
-15. On the **mongodbserver-nsg** page, under **Settings**, click **Inbound security rules**.
-16. On the **mongodbserver-nsg - Inbound security rules** page, click **+ Add**.
-17. In the **Add inbound security rule** pane, enter the following details, and then click **Add**:
+7. On the **Management** page, accept the default settings, and then click **Next: Advanced \>**.
+8. On the **Advanced** page, accept the default settings, and then click **Next: Tags \>**.
+9. On the **Tags** page, accept the default settings, and then click **Next: Review + create \>**.
+10. On the validation page, click **Create**.
+11. Wait for the virtual machine to be deployed before continuing
+12. In the left-hand pane of the Azure portal, click **All resources**.
+13. On the **All resources** page, click **mongodbserver-nsg**.
+14. On the **mongodbserver-nsg** page, under **Settings**, click **Inbound security rules**.
+15. On the **mongodbserver-nsg - Inbound security rules** page, click **+ Add**.
+16. In the **Add inbound security rule** pane, enter the following details, and then click **Add**:
 
     | Property  | Value  |
     |---|---|
@@ -124,27 +124,29 @@ In the first exercise, you'll create the MongoDB database for holding the data c
 2. On the **All resources** page, click **mongodbserver-ip**.
 3. On the **mongodbserver-ip** page, make a note of the **IP address**.
 4. In the toolbar at the top of the Azure portal, click **Cloud Shell**.
-5. In the Cloud Shell, enter the following command to connect to the mongodbserver virtual machine. Replace *\<ip address\>* with the value of the **mongodbserver-ip** IP address:
+5. If the **You have no storage mounted** message box appears, click **Create storage**.
+6. When the Cloud Shell starts, in the drop-down list above the Cloud Shell window, select **Bash**.
+7. In the Cloud Shell, enter the following command to connect to the mongodbserver virtual machine. Replace *\<ip address\>* with the value of the **mongodbserver-ip** IP address:
 
     ```bash
     ssh azureuser@<ip address>
     ```
 
-6. At the prompt, type **yes** to continue connecting.
-7. Enter the password **Pa55w.rdPa55w.rd**
-8. Type the following command, and make a note of the root password displayed:
+8. At the prompt, type **yes** to continue connecting.
+9. Enter the password **Pa55w.rdPa55w.rd**
+10. Type the following command, and make a note of the root password displayed:
 
     ```bash
     cat bitnami_credentials
     ```
 
-9. Run the following command to connect to the MongoDB database. Replace *\<password\>* with the root password displayed in the previous step. Ignore the warning about using the XFS filesystem:
+11. Run the following command to connect to the MongoDB database. Replace *\<password\>* with the root password displayed in the previous step. Ignore the warning about using the XFS filesystem:
 
     ```bash
     mongo -u root -p <password>
     ```
 
-10. At the **>** prompt, run the following commands. These commands create a new user named **deviceadmin** with password **Pa55w.rd** for a database named **DeviceData**. After running the `db.shutdownserver();` command you will receive some errors which you can ignore:
+12. At the **>** prompt, run the following commands. These commands create a new user named **deviceadmin** with password **Pa55w.rd** for a database named **DeviceData**. After running the `db.shutdownserver();` command you will receive some errors which you can ignore:
 
     ```mongosh
     use DeviceData;
@@ -160,25 +162,25 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     exit;
     ```
 
-11. Run the following command restart the mongodb service. Verify that the service restarts without any error messages, and is listening on port 27017:
+13. Run the following command restart the mongodb service. Verify that the service restarts without any error messages, and is listening on port 27017:
 
     ```bash
     sudo /opt/bitnami/ctlscript.sh start
     ```
 
-12. Run the following command to verify that you can now log in to mongodb as the deviceadmin user:
+14. Run the following command to verify that you can now log in to mongodb as the deviceadmin user:
 
     ```bash
     mongo -u "deviceadmin" -p "Pa55w.rd" --authenticationDatabase DeviceData
     ```
 
-13. At the **>** prompt, run the following command to quit the mongo shell:
+15. At the **>** prompt, run the following command to quit the mongo shell:
 
     ```mongosh
     exit;
     ```
 
-14. At the **bitnami@mongodbserver** prompt, type the following command to disconnect from the MongoDB server and return to the Cloud Shell:
+16. At the **bitnami@mongodbserver** prompt, type the following command to disconnect from the MongoDB server and return to the Cloud Shell:
 
     ```bash
     exit
@@ -199,7 +201,7 @@ You have now created a MongoDB server and database. The next step is to demonstr
 2. Move to the **migration-workshop-apps/MongoDeviceDataCapture/MongoDeviceCapture** folder:
 
     ```bash
-    cd ~/migration-workshop-apps/MongoDeviceDataCapture/MongoDeviceCapture
+    cd ~/migration-workshop-apps/MongoDeviceDataCapture/MongoDeviceDataCapture
     ```
 
 3. Use the **Code** editor to examine the **TemperatureDevice.cs** file:
@@ -294,8 +296,9 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
 
 1. Return to the Azure portal.
 2. In the left pane, click **+ Create a resource**.
-3. On the **New** page, click **Databases**, and then click **Azure Cosmos DB**.
-4. On the **Create Azure Cosmos DB Account**, enter the following settings, and then click **Review + create**:
+3. On the **New** page, in the **Search the Marketplace** box, type ***Azure Cosmos DB**, end then press Enter.
+4. On the **Azure Cosmos DB** page, click **Create**.
+5. On the **Create Azure Cosmos DB Account** page, enter the following settings, and then click **Review + create**:
 
     | Property  | Value  |
     |---|---|
@@ -307,12 +310,12 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
     | Geo-Redundancy | Disable |
     | Multi-region Writes | Disable |
 
-5. On the validation page, click **Create**, and wait for the Cosmos DB account to be deployed.
-6. In the left-hand pane, click **Azure Cosmos DB**.
-7. On the **Azure Cosmos DB** page, click your Cosmos DB account (**mongodb*nnn***).
-8. On the **mongodb*nnn*** page, click **Data Explorer**.
-9. In the **Data Explorer** pane, click **New Collection**.
-10. In the **Add Collection** pane, specify the following settings, and then click **OK**:
+6. On the validation page, click **Create**, and wait for the Cosmos DB account to be deployed.
+7. In the left-hand pane, click **Azure Cosmos DB**.
+8. On the **Azure Cosmos DB** page, click your Cosmos DB account (**mongodb*nnn***).
+9. On the **mongodb*nnn*** page, click **Data Explorer**.
+10. In the **Data Explorer** pane, click **New Collection**.
+11. In the **Add Collection** pane, specify the following settings, and then click **OK**:
 
     | Property  | Value  |
     |---|---|
@@ -331,7 +334,7 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
 5. In the **Filter by name** box, type **DataMigration**, and then click **Microsoft.DataMigration**.
 6. Click **Register**, and wait for the **Status** to change to **Registered**. It might be necessary to click **Refresh** to see the status to change.
 7. In the left-hand pane, click **+ Create a resource**.
-8. On the **New** page, in the **Search the Marketplace** box, type **Database Migration**, and then click **Azure Database Migration Service**.
+8. On the **New** page, in the **Search the Marketplace** box, type **Azure Database Migration Service**, and then press Enter.
 9. On the **Azure Database Migration Service** page, click **Create**.
 10. On the **Create Migration Service** page, enter the following settings, and then click **Create**:
 
@@ -400,7 +403,7 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
     | Unique | Leave blank |
 
 10. On the **Migration summary** page, in the **Activity name** field, enter **mongodb-migration**, select **Boost RU during initial data copy**, and then click **Run migration**.
-11. On the **mongodb-migration** page, click **Refresh** every 30 seconds, until the migration has completed. Note the number of documents migrated. 
+11. On the **mongodb-migration** page, click **Refresh** every 30 seconds, until the migration has completed. Note the number of documents migrated.
 
 ### Task 4: Verify that Migration was Successful
 
@@ -455,7 +458,7 @@ The final step is to reconfigure your existing MongoDB applications to connect t
     - Username
     - Primary Password
   
-3. Return to the Cloud Shell window, and move to the **migration-workshop-apps/MongoDeviceDataCapture/DeviceDataQuery** folder:
+3. Return to the Cloud Shell window (reconnect if the session has timed out), and move to the **migration-workshop-apps/MongoDeviceDataCapture/DeviceDataQuery** folder:
 
     ```bash
     cd ~/migration-workshop-apps/MongoDeviceDataCapture/DeviceDataQuery
@@ -568,8 +571,6 @@ You have successfully migrated a MongoDB database to Cosmos DB, and reconfigured
 ---
 © 2019 Microsoft Corporation. All rights reserved.
 
-The text in this document is available under the [Creative Commons Attribution 3.0
-License](https://creativecommons.org/licenses/by/3.0/legalcode), additional terms may apply. All other content contained in this document (including, without limitation, trademarks, logos, images, etc.) are
-**not** included within the Creative Commons license grant. This document does not provide you with any legal rights to any intellectual property in any Microsoft product. You may copy and use this document for your internal, reference purposes.
+The text in this document is available under the [Creative Commons Attribution 3.0 License](https://creativecommons.org/licenses/by/3.0/legalcode), additional terms may apply. All other content contained in this document (including, without limitation, trademarks, logos, images, etc.) are **not** included within the Creative Commons license grant. This document does not provide you with any legal rights to any intellectual property in any Microsoft product. You may copy and use this document for your internal, reference purposes.
 
 This document is provided "as-is." Information and views expressed in this document, including URL and other Internet Web site references, may change without notice. You bear the risk of using it. Some examples are for illustration only and are fictitious. No real association is intended or inferred. Microsoft makes no warranties, express or implied, with respect to the information provided here.

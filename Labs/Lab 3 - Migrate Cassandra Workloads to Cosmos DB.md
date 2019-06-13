@@ -39,42 +39,43 @@ In the first exercise, you'll create the Cassandra database for holding the cust
     | Property  | Value  |
     |---|---|
     | Subscription | *\<your-subscription\>* |
-    | Resource Group | cassandrabrg |
+    | Resource Group | cassandradbrg |
     | Region | Select your nearest location |
 
 4. Click **Create**, and wait for the resource group to be created.
 5. In the left-hand pane of the Azure portal, click **+ Create a resource**.
-6. On the **New** page, click **Networking**, and then click **Virtual network**.
-7. On the **Create virtual network** page, enter the following details, and then click **Create**:
+6. On the **New** page, in the **Search the Marketplace** box, type **Virtual Network**, and press Enter.
+7. On the **Virtual Network** page, click **Create**.
+8. On the **Create virtual network** page, enter the following details, and then click **Create**:
 
     | Property  | Value  |
     |---|---|
-    | Name | cassandravnet |
-    | Address space | Accept the default address space and range |
+    | Name | databasevnet |
+    | Address space | 10.0.0.0/24 |
     | Subscription | *\<your-subscription\>* |
-    | Resource Group | cassandrarg |
+    | Resource Group | cassandradbrg |
+    | Resource Group | mongodbrg |
     | Region | Select the same location that you specified for the resource group |
     | Subnet Name | default |
-    | Subnet Address range | Accept the default address space and range |
+    | Subnet Address range | 10.0.0.0/28 |
     | DDos protection | Basic |
     | Service endpoints | Disabled |
     | Firewall | Disabled |
 
-8. Wait for the virtual network to be created before continuing.
+9. Wait for the virtual network to be created before continuing.
 
 ### Task 2: Create a Cassandra Database Server
 
 1. In the left-hand pane of the Azure portal, click **+ Create a resource**.
-2. In the **Search** box, type **Bitnami Cassandra**, and then press Enter.
-3. On the **Get Started** page, click **Cassandra Certified by Bitnami**.
-4. On the **Cassandra Certified by Bitnami** page, click **Create**.
-5. On the **Create a virtual machine** page, enter the following details, and then click **Next: Disks \>**.
+2. In the **Search the Marketplace** box, type ***Cassandra Certified by Bitnami**, and then press Enter.
+3. On the **Cassandra Certified by Bitnami** page, click **Create**.
+4. On the **Create a virtual machine** page, enter the following details, and then click **Next: Disks \>**.
 
     | Property  | Value  |
     |---|---|
     | Subscription | *\<your-subscription\>* |
-    | Resource Group | cassandrarg |
-    | Virtual machine name | cassandraserver | 
+    | Resource Group | cassandradbrg |
+    | Virtual machine name | cassandraserver |
     | Region | Select the same location that you specified for the resource group |
     | Availability options | No infrastructure redundancy required |
     | Image | Cassandra Certified by Bitnami |
@@ -84,29 +85,29 @@ In the first exercise, you'll create the Cassandra database for holding the cust
     | Password | Pa55w.rdPa55w.rd |
     | Confirm password | Pa55w.rdPa55w.rd |
 
-6. On the **Disks** page, accept the default settings, and then click **Next: Networking \>**.
-7. On the **Networking** page, enter the following details, and then click **Next: Management \>**.
+5. On the **Disks** page, accept the default settings, and then click **Next: Networking \>**.
+6. On the **Networking** page, enter the following details, and then click **Next: Management \>**.
 
     | Property  | Value  |
     |---|---|
     | Virtual network | cassandravnet |
-    | Subnet | default |
+    | Subnet | default (10.0.0.0/28) |
     | Public IP | (new) cassandraserver-ip |
     | NIC network security group | Advanced |
     ! Configure network security group | (new) cassandraserver-nsg |
     | Accelerated networking | Off |
     | Load balancing | No |
 
-8. On the **Management** page, accept the default settings, and then click **Next: Advanced \>**.
-9. On the **Advanced** page, accept the default settings, and then click **Next: Tags \>**.
-10. On the **Tags** page, accept the default settings, and then click **Next: Review + create \>**.
-11. On the validation page, click **Create**.
-12. Wait for the virtual machine to be deployed before continuing
-13. In the left-hand pane of the Azure portal, click **All resources**.
-14. On the **All resources** page, click **cassandraserver-nsg**.
-15. On the **cassandraserver-nsg** page, under **Settings**, click **Inbound security rules**.
-16. On the **cassandraserver-nsg - Inbound security rules** page, click **+ Add**.
-17. In the **Add inbound security rule** pane, enter the following details, and then click **Add**:
+7. On the **Management** page, accept the default settings, and then click **Next: Advanced \>**.
+8. On the **Advanced** page, accept the default settings, and then click **Next: Tags \>**.
+9. On the **Tags** page, accept the default settings, and then click **Next: Review + create \>**.
+10. On the validation page, click **Create**.
+11. Wait for the virtual machine to be deployed before continuing
+12. In the left-hand pane of the Azure portal, click **All resources**.
+13. On the **All resources** page, click **cassandraserver-nsg**.
+14. On the **cassandraserver-nsg** page, under **Settings**, click **Inbound security rules**.
+15. On the **cassandraserver-nsg - Inbound security rules** page, click **+ Add**.
+15. In the **Add inbound security rule** pane, enter the following details, and then click **Add**:
 
     | Property  | Value  |
     |---|---|
@@ -126,34 +127,36 @@ In the first exercise, you'll create the Cassandra database for holding the cust
 2. On the **All resources** page, click **cassandraserver-ip**.
 3. On the **cassandraserver-ip** page, make a note of the **IP address**.
 4. In the toolbar at the top of the Azure portal, click **Cloud Shell**.
-5. In the Cloud Shell, if you haven't performed Lab 2, run the following command to download the sample code and data for this workshop:
+5. If the **You have no storage mounted** message box appears, click **Create storage**.
+6. When the Cloud Shell starts, in the drop-down list above the Cloud Shell window, select **Bash**.
+7. In the Cloud Shell, if you haven't performed Lab 2, run the following command to download the sample code and data for this workshop:
 
     ```bash
     git clone https://github.com/MicrosoftLearning/DP-160T00A-Migrating-your-Database-to-Cosmos-DB migration-workshop-apps
     ```
 
-6. Move to the **migration-workshop-apps/Cassandra** folder:
+8. Move to the **migration-workshop-apps/Cassandra** folder:
 
     ```bash
     cd ~/migration-workshop-apps/Cassandra
     ```
 
-7. Enter the following commands to copy the setup scripts and data to the **cassandraserver** virtual machine. Replace *\<ip address\>* with the value of the **cassandraserver-ip** IP address:
+9. Enter the following commands to copy the setup scripts and data to the **cassandraserver** virtual machine. Replace *\<ip address\>* with the value of the **cassandraserver-ip** IP address:
 
     ```bash
     scp *.* azureuser@<ip address>:~
     ```
 
-8. At the **Password** prompt, enter the password **Pa55w.rdPa55w.rd**
-9. Type the following command to connect to the **cassandraserver** virtual machine. Specify the IP address of the **cassandraserver** virtual machine:
+10. At the prompt, type **yes** to continue connecting.
+11. At the **Password** prompt, enter the password **Pa55w.rdPa55w.rd**
+12. Type the following command to connect to the **cassandraserver** virtual machine. Specify the IP address of the **cassandraserver** virtual machine:
 
     ```bash
     ssh azureuser@<ip address>
     ```
 
-10. At the prompt, type **yes** to continue connecting.
-11. At the **Password** prompt, enter the password **Pa55w.rdPa55w.rd**
-12. Run the following command to connect to the Cassandra database, create the tables required by this lab, and populate them.
+13. At the **Password** prompt, enter the password **Pa55w.rdPa55w.rd**
+14. Run the following command to connect to the Cassandra database, create the tables required by this lab, and populate them.
 
     ```bash
     bash upload.sh
@@ -161,19 +164,19 @@ In the first exercise, you'll create the Cassandra database for holding the cust
 
     The script creates two keyspaces named **customerinfo** and **orderinfo**. The script creates a table named **customerdetails** in the **customerinfo** keyspace, and two tables named **orderdetails** and **orderline** in the**orderinfo** keyspace.
 
-13. Run the following command, and make a note of the default password in this file:
+15. Run the following command, and make a note of the default password in this file:
 
     ```bash
     cat bitnami_credentials
     ```
 
-14. Start the Cassandra Query Shell as the user **cassandra** (this is the name of the default Cassandra user created when the virtual machine was set up). Replace *\<password\>* with the default password from the previous step:
+16. Start the Cassandra Query Shell as the user **cassandra** (this is the name of the default Cassandra user created when the virtual machine was set up). Replace *\<password\>* with the default password from the previous step:
 
     ```bash
     cqlsh -u cassandra -p <password>
     ```
 
-15. At the **cassandra@cqlsh** prompt, run the following command. This command displays the first 100 rows from the **customerinfo.customerdetails** table:
+17. At the **cassandra@cqlsh** prompt, run the following command. This command displays the first 100 rows from the **customerinfo.customerdetails** table:
 
     ```cqlsh
     select *
@@ -183,7 +186,7 @@ In the first exercise, you'll create the Cassandra database for holding the cust
 
     Note that the data is clustered by the **stateprovince** column, and then ordered by **customerid**. This grouping enables applications to quickly find all customers located in the same region.
 
-16. Run the following command. This command displays the first 100 rows from the **orderinfo.orderdetails** table:
+18. Run the following command. This command displays the first 100 rows from the **orderinfo.orderdetails** table:
 
     ```cqlsh
     select *
@@ -191,9 +194,9 @@ In the first exercise, you'll create the Cassandra database for holding the cust
     limit 100;
     ```
 
-    The **orderinfo.orderdetails** table contains a list of orders placed by each customer. The data recorded includes the date the order was placed, and the value of the order. The data is clustered by the **customerid** column, so that applications to quickly find all orders for a specified customer.
+    The **orderinfo.orderdetails** table contains a list of orders placed by each customer. The data recorded includes the date the order was placed, and the value of the order. The data is clustered by the **customerid** column, so that applications can quickly find all orders for a specified customer.
 
-17. Run the following command. This command displays the first 100 rows from the **orderinfo.orderline** table:
+19. Run the following command. This command displays the first 100 rows from the **orderinfo.orderline** table:
 
     ```cqlsh
     select *
@@ -203,13 +206,13 @@ In the first exercise, you'll create the Cassandra database for holding the cust
 
     This table contains teh items for each order. The data is clustered by the **orderid** column, and sorted by **orderline**.
 
-18. Quit the Cassandra Query Shell:
+20. Quit the Cassandra Query Shell:
 
     ```cqlsh
     exit;
     ```
 
-19. At the **bitnami@cassandraserver** prompt, type the following command to disconnect from the Cassandra server and return to the Cloud Shell:
+21. At the **bitnami@cassandraserver** prompt, type the following command to disconnect from the Cassandra server and return to the Cloud Shell:
 
     ```bash
     exit
@@ -223,25 +226,26 @@ You have now created and populated a Cassandra database. In this exercise, you w
 
 1. Return to the Azure portal.
 2. In the left pane, click **+ Create a resource**.
-3. On the **New** page, click **Databases**, and then click **Azure Cosmos DB**.
-4. On the **Create Azure Cosmos DB Account**, enter the following settings, and then click **Review + create**:
+3. On the **New** page, in the **Search the Marketplace** box, type ***Azure Cosmos DB**, end then press Enter.
+4. On the **Azure Cosmos DB** page, click **Create**.
+5. On the **Create Azure Cosmos DB Account** page, enter the following settings, and then click **Review + create**:
 
     | Property  | Value  |
     |---|---|
     | Subscription | Select your subscription |
-    | Resource group | cassandrarg |
+    | Resource group | cassandradbrg |
     | Account Name | cassandra*nnn*, where *nnn* is a random number selected by you |
     | API | Cassandra |
     | Location | Specify the same location that you used for the Cassandra server and virtual network |
     | Geo-Redundancy | Disable |
     | Multi-region Writes | Disable |
 
-5. On the validation page, click **Create**, and wait for the Cosmos DB account to be deployed.
-6. In the left-hand pane, click **Azure Cosmos DB**.
-7. On the **Azure Cosmos DB** page, click your Cosmos DB account (**cassandra*nnn***).
-8. On the **cassandra*nnn*** page, click **Data Explorer**.
-9. In the **Data Explorer** pane, click **New Table**.
-10. In the **Add Table** pane, specify the following settings, and then click **OK**:
+6. On the validation page, click **Create**, and wait for the Cosmos DB account to be deployed.
+7. In the left-hand pane, click **Azure Cosmos DB**.
+8. On the **Azure Cosmos DB** page, click your Cosmos DB account (**cassandra*nnn***).
+9. On the **cassandra*nnn*** page, click **Data Explorer**.
+10. In the **Data Explorer** pane, click **New Table**.
+11. In the **Add Table** pane, specify the following settings, and then click **OK**:
 
     | Property  | Value  |
     |---|---|
@@ -251,8 +255,8 @@ You have now created and populated a Cassandra database. In this exercise, you w
     | *CREATE TABLE* box | (customerid int, firstname text, lastname text, email text, stateprovince text, PRIMARY KEY ((stateprovince), customerid)) |
     | Throughput | 10000 |
 
-11. In the **Data Explorer** pane, click **New Table**.
-12. In the **Add Table** pane, specify the following settings, and then click **OK**:
+12. In the **Data Explorer** pane, click **New Table**.
+13. In the **Add Table** pane, specify the following settings, and then click **OK**:
 
     | Property  | Value  |
     |---|---|
@@ -262,13 +266,12 @@ You have now created and populated a Cassandra database. In this exercise, you w
     | *CREATE TABLE* box | (orderid int, customerid int, orderdate date, ordervalue decimal, PRIMARY KEY ((customerid), orderdate, orderid)) |
     | Throughput | 10000 |
 
-13. In the **Data Explorer** pane, click **New Collection**.
-14. In the **Add Collection** pane, specify the following settings, and then click **OK**:
+14. In the **Data Explorer** pane, click **New Table**.
+15. In the **Add Table** pane, specify the following settings, and then click **OK**:
 
     | Property  | Value  |
     |---|---|
     | Keyspace name | Click **Use existing**, and then select **orderinfo** |
-    | Provision keyspace throughput | de-selected |
     | Enter tableId | orderline |
     | *CREATE TABLE* box | (orderid int, orderline int, productname text, quantity smallint, orderlinecost decimal, PRIMARY KEY ((orderid), productname, orderline)) |
     | Throughput | 10000 |
@@ -361,13 +364,10 @@ You have now created and populated a Cassandra database. In this exercise, you w
 9. In the **Field** box, select **customerid**, and in the **Value** box, type **13999**.
 10. In the toolbar, click **Run Query**. Verify that the query returns 2 rows. Note the **orderid** for the first row (it should be 46899).
 11. In the **Data Explorer** pane, expand the **orderinfo** keyspace, expand the **orderline** table, and then click **Rows**.
-12. Click **Add new clause**.
-13. In the **Field** box, select **customerid**, and in the **Value** box, type **13999**.
-14. In the toolbar, click **Run Query**. Verify that the query returns 2 rows. Note the **orderid** for the first row (it should be 46899).
-15. In the **Data Explorer** pane, in the **orderinfo** keyspace, expand the **orderline** table, and then click **Rows**.
-16. Click **Add new clause**.
-17. In the **Field** box, select **orderid**, and in the **Value** box, type **46899**.
-18. In the toolbar, click **Run Query**. Verify that the query returns 1 row, listing the product being ordered as **Road-550-W Yellow, 40**.
+12. In the **Data Explorer** pane, in the **orderinfo** keyspace, expand the **orderline** table, and then click **Rows**.
+13. Click **Add new clause**.
+14. In the **Field** box, select **orderid**, and in the **Value** box, type **46899**.
+15. In the toolbar, click **Run Query**. Verify that the query returns 1 row, listing the product being ordered as **Road-550-W Yellow, 40**.
 
 You have successfully migrated a Cassandra database to Cosmos DB by using the CQLSH COPY command.
 
@@ -385,34 +385,36 @@ You have successfully migrated a Cassandra database to Cosmos DB by using the CQ
 2. In the Cassandra Query Shell, run the following commands to remove the keyspaces (and tables):
 
     ```cqlsh
-    drop keyspace customerinfo; 
+    drop keyspace customerinfo;
     drop keyspace orderinfo;
+    exit;
     ```
 
 ## Exercise 3: Migrate Data from Cassandra to Cosmos DB Using Spark
 
-In this exercise, you will migrate the same data used previously, but this time you will use Spark from an Azure Databricks notebook.
+In this exercise, you'll migrate the same data used previously, but this time you'll use Spark from an Azure Databricks notebook.
 
 ### Task 1: Create a Spark Cluster
 
 1. In the Azure portal, in the left-hand pane, click **+ Create a resource**.
-2. In the **New** pane, click **Analytics**, and then click **Azure Databricks**.
-3. On the **Azure Databricks Service** page, enter the following details, and then click **Create**:
+2. In the **New** pane, in the **Search the Mrketplace** box, type **Azure Databricks**, and then press Enter.
+3. On the **Azure Databricks** page, click **Create**.
+4. On the **Azure Databricks Service** page, enter the following details, and then click **Create**:
 
     | Property  | Value  |
     |---|---|
     | Workspace name | CassandraMigration |
     | Subscription | *\<your-subscription\>* |
-    | Resource Group | Use existing, cassandrarg |
+    | Resource Group | Use existing, cassandradbrg |
     | Location | Select the same location that you specified for the resource group |
     | Pricing Tier | Standard |
     | Deploy Azure Databricks workspace in your Virtual Network | No |
 
-4. Wait for the Databricks Service to be deployed.
-5. In the left-hand pane, click **Resource groups**, click **cassandrarg**, and then click the **CassandraMigration** Databricks Service.
-6. On the **CassandraMigration** page, click **Launch Workspace**.
-7. On the **Azure Databricks** page, under **Common Tasks**, click **New Cluster**.
-8. On the **New Cluster** page, enter the following settings, and then click **Create Cluster**:
+5. Wait for the Databricks Service to be deployed.
+6. In the left-hand pane, click **Resource groups**, click **cassandradbrg**, and then click the **CassandraMigration** Databricks Service.
+7. On the **CassandraMigration** page, click **Launch Workspace**.
+8. On the **Azure Databricks** page, under **Common Tasks**, click **New Cluster**.
+9. On the **New Cluster** page, enter the following settings, and then click **Create Cluster**:
 
     | Property  | Value  |
     |---|---|
@@ -423,9 +425,9 @@ In this exercise, you will migrate the same data used previously, but this time 
     | Enable autoscaling | Selected |
     | Terminate after | 60 |
     | Worker Type | Accept the default settings |
-    | Driver TYpe | Same as worker |
+    | Driver Type | Same as worker |
 
-9. Wait for the cluster to be created; the state of the **MigrationCluster** is reported as **Running** when the cluster is ready. This process will take several minutes.
+10. Wait for the cluster to be created; the state of the **MigrationCluster** is reported as **Running** when the cluster is ready. This process will take several minutes.
 
 ### Task 2: Create a Notebook for Migrating Data
 
@@ -522,6 +524,7 @@ In this exercise, you will migrate the same data used previously, but this time 
 
     cosmosDBConnector.withSessionDo(session => session.execute("CREATE KEYSPACE orderinfo WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}"))
     cosmosDBConnector.withSessionDo(session => session.execute("CREATE TABLE orderinfo.orderdetails (orderid int, customerid int, orderdate date, ordervalue decimal, PRIMARY KEY ((customerid), orderdate, orderid)) WITH cosmosdb_provisioned_throughput=10000"))
+
     cosmosDBConnector.withSessionDo(session => session.execute("CREATE TABLE orderinfo.orderline (orderid int, orderline int, productname text, quantity smallint, orderlinecost decimal, PRIMARY KEY ((orderid), productname, orderline)) WITH cosmosdb_provisioned_throughput=10000"))
     ```
 
@@ -646,7 +649,7 @@ In this exercise, you will migrate the same data used previously, but this time 
 
     The DataFrame API is a very powerful abstraction provided by Spark, and is a highly efficient structure for transporting large volumes of data very quickly.
 
-2. In the toolbar at the top of the notebook, click **Run All**.  You will see messages indicating that the cluster is starting up. When the cluster is ready, the notebook runs the code in each cell in turn. You will see further messages appearing below each cell. The data transfer operations that read and write DataFrames are executed as Spark jobs. You can expand the job to view the progress. The code in each cell should complete successfully, without displaying any errors.
+2. In the toolbar at the top of the notebook, click **Run All**.  You will see messages indicating that the cluster is starting up. When the cluster is ready, the notebook runs the code in each cell in turn. You will see further messages appearing below each cell. The data transfer operations that read and write DataFrames are executed as Spark jobs. You can expand the job to view the progress. The code in each cell should complete successfully, without displaying any error messages.
 
 ### Task 6: Verify that Data Migration was Successful
 
@@ -661,9 +664,9 @@ You have successfully migrated a Cassandra database to Cosmos DB by using Spark 
 ### Task 7: Clean Up
 
 1. In the Azure portal, in the left-hand pane, click **Resource groups**.
-2. In the **Resource groups** window, click **cassandrarg**.
+2. In the **Resource groups** window, click **cassandradbrg**.
 3. Click **Delete resource group**.
-4. On the **Are you sure you want to delete "cassandrarg"** page, in the **Type the resource group name** box, enter **cassandrarg**, and then click **Delete**.
+4. On the **Are you sure you want to delete "cassandradbrg"** page, in the **Type the resource group name** box, enter **cassandradbrg**, and then click **Delete**.
 
 ---
 © 2019 Microsoft Corporation. All rights reserved.
