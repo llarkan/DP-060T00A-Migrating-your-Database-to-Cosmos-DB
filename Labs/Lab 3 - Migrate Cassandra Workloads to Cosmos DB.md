@@ -397,7 +397,7 @@ In this exercise, you'll migrate the same data used previously, but this time yo
 ### Task 1: Create a Spark Cluster
 
 1. In the Azure portal, in the left-hand pane, click **+ Create a resource**.
-2. In the **New** pane, in the **Search the Mrketplace** box, type **Azure Databricks**, and then press Enter.
+2. In the **New** pane, in the **Search the Marketplace** box, type **Azure Databricks**, and then press Enter.
 3. On the **Azure Databricks** page, click **Create**.
 4. On the **Azure Databricks Service** page, enter the following details, and then click **Create**:
 
