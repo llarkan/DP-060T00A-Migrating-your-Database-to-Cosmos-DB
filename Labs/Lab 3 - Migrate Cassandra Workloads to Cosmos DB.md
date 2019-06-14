@@ -90,7 +90,7 @@ In the first exercise, you'll create the Cassandra database for holding the cust
 
     | Property  | Value  |
     |---|---|
-    | Virtual network | cassandravnet |
+    | Virtual network | databasevnet |
     | Subnet | default (10.0.0.0/28) |
     | Public IP | (new) cassandraserver-ip |
     | NIC network security group | Advanced |
