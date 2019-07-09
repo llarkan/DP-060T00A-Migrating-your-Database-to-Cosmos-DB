@@ -54,7 +54,6 @@ In the first exercise, you'll create the Cassandra database for holding the cust
     | Address space | 10.0.0.0/24 |
     | Subscription | *\<your-subscription\>* |
     | Resource Group | cassandradbrg |
-    | Resource Group | mongodbrg |
     | Region | Select the same location that you specified for the resource group |
     | Subnet Name | default |
     | Subnet Address range | 10.0.0.0/28 |
