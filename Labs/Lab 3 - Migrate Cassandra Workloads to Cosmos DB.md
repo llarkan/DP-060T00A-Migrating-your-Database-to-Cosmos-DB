@@ -66,7 +66,7 @@ In the first exercise, you'll create the Cassandra database for holding the cust
 ### Task 2: Create a Cassandra Database Server
 
 1. In the left-hand pane of the Azure portal, click **+ Create a resource**.
-2. In the **Search the Marketplace** box, type ***Cassandra Certified by Bitnami**, and then press Enter.
+2. In the **Search the Marketplace** box, type **Cassandra Certified by Bitnami**, and then press Enter.
 3. On the **Cassandra Certified by Bitnami** page, click **Create**.
 4. On the **Create a virtual machine** page, enter the following details, and then click **Next: Disks \>**.
 
