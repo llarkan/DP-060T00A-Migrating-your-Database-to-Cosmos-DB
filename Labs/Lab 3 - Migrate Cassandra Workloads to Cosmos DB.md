@@ -419,7 +419,7 @@ In this exercise, you'll migrate the same data used previously, but this time yo
     |---|---|
     | Cluster Name | MigrationCluster |
     | Cluster Mode | Standard |
-    | Databrick Runtime Version | Runtime: 5.3 (Scala 2.11, Spark 2.4.0) |
+    | Databrick Runtime Version | Runtime: 5.3 (Scala 2.11, Spark 2.4.1) |
     | Python Version | 3 |
     | Enable autoscaling | Selected |
     | Terminate after | 60 |
