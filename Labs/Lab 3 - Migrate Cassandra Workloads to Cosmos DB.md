@@ -438,7 +438,7 @@ In this exercise, you'll migrate the same data used previously, but this time yo
     |---|---|
     | Library Source | Maven |
     | Repository | Leave blank |
-    | Coordinates | com.datastax.spark:spark-cassandra-connector_2.11:2.4.0 |
+    | Coordinates | com.datastax.spark:spark-cassandra-connector_2.11:2.4.1 |
     | Exclusions | Leave blank |
 
     This library contains the classes for connecting to Cassandra from Spark.
