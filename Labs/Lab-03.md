@@ -23,6 +23,8 @@ In this lab, you will:
 
 ## Notes
 
+The full instructions for this lab are available at https://github.com/MicrosoftLearning/DP-060T00A-Migrating-your-Database-to-Cosmos-DB/blob/master/Labs/Lab%203%20-%20Migrate%20Cassandra%20Workloads%20to%20Cosmos%20DB.md
+
 All of the files for this lab are located at https://github.com/MicrosoftLearning/DP-160T00A-Migrating-your-Database-to-Cosmos-DB.
 
 Students should download a copy of the lab files before performing the lab.
