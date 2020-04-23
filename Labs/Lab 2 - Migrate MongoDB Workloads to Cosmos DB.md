@@ -1,23 +1,24 @@
-- [Lab 2: Migrate MongDB Workloads to Cosmos DB](#lab-2-migrate-mongdb-workloads-to-cosmos-db)
-  - [Exercise 1: Setup](#exercise-1-setup)
-    - [Task 1: Create a Resource Group and Virtual Network](#task-1-create-a-resource-group-and-virtual-network)
-    - [Task 2: Create a MongoDB Database Server](#task-2-create-a-mongodb-database-server)
-    - [Task 3: Configure the MongoDB Database](#task-3-configure-the-mongodb-database)
-  - [Exercise 2: Populate and Query the MongoDB Database](#exercise-2-populate-and-query-the-mongodb-database)
-    - [Task 1: Build and Run an App to Populate the MongoDB Database](#task-1-build-and-run-an-app-to-populate-the-mongodb-database)
-    - [Task 2: Build and Run Another App to Query the MongoDB Database](#task-2-build-and-run-another-app-to-query-the-mongodb-database)
-  - [Exercise 3: Migrate the MongoDB Database to Cosmos DB](#exercise-3-migrate-the-mongodb-database-to-cosmos-db)
-    - [Task 1: Create a Cosmos Account and Database](#task-1-create-a-cosmos-account-and-database)
-    - [Task 2: Create the Database Migration Service](#task-2-create-the-database-migration-service)
-    - [Task 3: Create and Run a New Migration Project](#task-3-create-and-run-a-new-migration-project)
-    - [Task 4: Verify that Migration was Successful](#task-4-verify-that-migration-was-successful)
-  - [Exercise 4: Reconfigure and Run Existing Applications to Use Cosmos DB](#exercise-4-reconfigure-and-run-existing-applications-to-use-cosmos-db)
-    - [Task 1: Enable MongoDB Aggregation Support](#task-1-enable-mongodb-aggregation-support)
-    - [Task 2: Reconfigure the DeviceDataQuery Application](#task-2-reconfigure-the-devicedataquery-application)
-  - [Exercise 5: Clean Up](#exercise-5-clean-up)
 
 # Lab 2: Migrate MongDB Workloads to Cosmos DB
+<!-- TOC -->
 
+- [Lab 2: Migrate MongDB Workloads to Cosmos DB](#lab-2-migrate-mongdb-workloads-to-cosmos-db)
+    - [Exercise 1: Setup](#exercise-1-setup)
+        - [Task 1: Create a Resource Group and Virtual Network](#task-1-create-a-resource-group-and-virtual-network)
+        - [Task 2: Create a MongoDB Database Server](#task-2-create-a-mongodb-database-server)
+        - [Task 3: Configure the MongoDB Database](#task-3-configure-the-mongodb-database)
+    - [Exercise 2: Populate and Query the MongoDB Database](#exercise-2-populate-and-query-the-mongodb-database)
+        - [Task 1: Build and Run an App to Populate the MongoDB Database](#task-1-build-and-run-an-app-to-populate-the-mongodb-database)
+        - [Task 2: Build and Run Another App to Query the MongoDB Database](#task-2-build-and-run-another-app-to-query-the-mongodb-database)
+    - [Exercise 3: Migrate the MongoDB Database to Cosmos DB](#exercise-3-migrate-the-mongodb-database-to-cosmos-db)
+        - [Task 1: Create a Cosmos Account and Database](#task-1-create-a-cosmos-account-and-database)
+        - [Task 2: Create the Database Migration Service](#task-2-create-the-database-migration-service)
+        - [Task 3: Create and Run a New Migration Project](#task-3-create-and-run-a-new-migration-project)
+        - [Task 4: Verify that Migration was Successful](#task-4-verify-that-migration-was-successful)
+    - [Exercise 4: Reconfigure and Run Existing Applications to Use Cosmos DB](#exercise-4-reconfigure-and-run-existing-applications-to-use-cosmos-db)
+    - [Exercise 5: Clean Up](#exercise-5-clean-up)
+
+<!-- /TOC -->
 In this lab, you'll take an existing MongoDB database and migrate it to Cosmos DB. You'll use the Azure Database Migration Service. You'll also see how to reconfigure existing applications that use the MongoDB database to connect to the Cosmos DB database instead.
 
 The lab is based around an example system that captures temperature data from a series of IoT devices. The temperatures are logged in a MongoDB database, together with a timestamp. Each device has a unique ID. You will run a MongoDB application that simulates these devices, and stores the data in the database. You will also use a second application that enables a user to query statistical information about each device. After migrating the database from MongoDB to Cosmos DB, you'll configure both applications to connect to Cosmos DB, and verify that they still function correctly.
@@ -41,32 +42,35 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     | Region | Select your nearest location |
 
 4. Click **Create**, and wait for the resource group to be created.
-5. In the left-hand pane of the Azure portal, click **+ Create a resource**.
+5. In the hamburger menu of the Azure portal, click **+ Create a resource**.
 6. On the **New** page, in the **Search the Marketplace** box, type **Virtual Network**, and press Enter.
 7. On the **Virtual Network** page, click **Create**.
-8. On the **Create virtual network** page, enter the following details, and then click **Create**:
+8. On the **Create virtual network** page, enter the following details, and then click **Next: IP Addresses**:
 
     | Property  | Value  |
     |---|---|
-    | Name | databasevnet |
-    | Address space | 10.0.0.0/24 |
     | Subscription | *\<your-subscription\>* |
     | Resource Group | mongodbrg |
+    | Name | databasevnet |
     | Region | Select the same location that you specified for the resource group |
-    | Subnet Name | default |
-    | Subnet Address range | 10.0.0.0/28 |
-    | DDos protection | Basic |
-    | Service endpoints | Disabled |
-    | Firewall | Disabled |
+    
+9. On the **IP Addresses** page, set the **IPv4 address space** to **10.0.0.0/24**, and then click click **+ Add subnet**.
 
-9. Wait for the virtual network to be created before continuing.
+10. In the **Add subnet** pane, set the **Subnet name** to **default**, set the **Subnet address range** to **10.0.0.0/28**, and then click **Add**.
+
+11. On the **IP Addresses** page, select the **default** subnet, and then click **Next: Security**.
+
+12. On the **Security** page, verify that **DDoS protection** is set to **Basic**, and **Firewall** is set to **Disabled**. Click **Review * create**.
+
+13. On the **Create virtual network** page, click **Create**. Wait for the virtual network to be created before continuing.
 
 ### Task 2: Create a MongoDB Database Server
 
-1. In the left-hand pane of the Azure portal, click **+ Create a resource**.
-2. In the **Search the Marketplace** box, type ***MongoDB Certified by Bitnami**, and then press Enter.
-3. On the **MongoDB Certified by Bitnami** page, click **Create**.
-4. On the **Create a virtual machine** page, enter the following details, and then click **Next: Disks \>**.
+1. In the hamburger menu of the Azure portal, click **+ Create a resource**.
+2. In the **Search the Marketplace** box, type ***MongoDB Community**, and then press Enter.
+3. On the **Marketplace** page, click **MongoDB Community on Ubuntu**.
+4. On the **MongoDB Community on Ubuntu** page, click **Create**.
+5. On the **Create a virtual machine** page, enter the following details, and then click **Next: Disks \>**.
 
     | Property  | Value  |
     |---|---|
@@ -75,15 +79,16 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     | Virtual machine name | mongodbserver | 
     | Region | Select the same location that you specified for the resource group |
     | Availability options | No infrastructure redundancy required |
-    | Image | MongoDB Certified by Bitnami |
-    | Size | Standard A1 v2 |
+    | Image | MongoDB Community 4.0 on Ubuntu |
+    | Azure Spot instance | No |
+    | Size | Standard A1_v2 |
     | Authentication type | Password |
     | Username | azureuser |
     | Password | Pa55w.rdPa55w.rd |
     | Confirm password | Pa55w.rdPa55w.rd |
 
-5. On the **Disks** page, accept the default settings, and then click **Next: Networking \>**.
-6. On the **Networking** page, enter the following details, and then click **Next: Management \>**.
+6. On the **Disks** page, accept the default settings, and then click **Next: Networking \>**.
+7. On the **Networking** page, enter the following details, and then click **Next: Management \>**.
 
     | Property  | Value  |
     |---|---|
@@ -95,16 +100,14 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     | Accelerated networking | Off |
     | Load balancing | No |
 
-7. On the **Management** page, accept the default settings, and then click **Next: Advanced \>**.
-8. On the **Advanced** page, accept the default settings, and then click **Next: Tags \>**.
-9. On the **Tags** page, accept the default settings, and then click **Next: Review + create \>**.
-10. On the validation page, click **Create**.
-11. Wait for the virtual machine to be deployed before continuing
-12. In the left-hand pane of the Azure portal, click **All resources**.
-13. On the **All resources** page, click **mongodbserver-nsg**.
-14. On the **mongodbserver-nsg** page, under **Settings**, click **Inbound security rules**.
-15. On the **mongodbserver-nsg - Inbound security rules** page, click **+ Add**.
-16. In the **Add inbound security rule** pane, enter the following details, and then click **Add**:
+8. On the **Management** page, accept the default settings, and then click **Review + create \>**.
+9. On the validation page, click **Create**.
+10. Wait for the virtual machine to be deployed before continuing
+11. In hamburger menu of the Azure portal, click **All resources**.
+12. On the **All resources** page, click **mongodbserver-nsg**.
+13. On the **mongodbserver-nsg** page, under **Settings**, click **Inbound security rules**.
+14. On the **mongodbserver-nsg - Inbound security rules** page, click **+ Add**.
+15. In the **Add inbound security rule** pane, enter the following details, and then click **Add**:
 
     | Property  | Value  |
     |---|---|
@@ -114,13 +117,15 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     | Destination port ranges | 27017 |
     | Protocol | Any |
     | Action | Allow |
-    | Priority | 1020 |
+    | Priority | 1030 |
     | Name | Mongodb-port |
     | Description | Port that clients use to connect to MongoDB |
 
 ### Task 3: Configure the MongoDB Database
 
-1. In the left-hand pane of the Azure portal, click **All resources**.
+By default, the Mongo DB instance is configured to run without authentication. In this task, you'll enable authentication and create the necessary user account to perform migration. You'll also add an account that a test application can use to query the database.
+
+1. In the hamburger menu the Azure portal, click **All resources**.
 2. On the **All resources** page, click **mongodbserver-ip**.
 3. On the **mongodbserver-ip** page, make a note of the **IP address**.
 4. In the toolbar at the top of the Azure portal, click **Cloud Shell**.
@@ -134,19 +139,50 @@ In the first exercise, you'll create the MongoDB database for holding the data c
 
 8. At the prompt, type **yes** to continue connecting.
 9. Enter the password **Pa55w.rdPa55w.rd**
-10. Type the following command, and make a note of the root password displayed:
+10. Stop the MongoDB service:
 
     ```bash
-    cat bitnami_credentials
+    sudo service mongod stop
     ```
 
-11. Run the following command to connect to the MongoDB database. Replace *\<password\>* with the root password displayed in the previous step. Ignore the warning about using the XFS filesystem:
+11. Start a bash shell as the **mongodb** user:
 
     ```bash
-    mongo -u root -p <password>
+    sudo -u mongodb bash
     ```
 
-12. At the **>** prompt, run the following commands. These commands create a new user named **deviceadmin** with password **Pa55w.rd** for a database named **DeviceData**. After running the `db.shutdownserver();` command you will receive some errors which you can ignore:
+12. Restart the MongoDB service locally as the **mongodb** user.
+
+    ```bash
+    mongod --dbpath /data/mongo &
+    ```
+
+    You'll see a number of messages appear on the console as the service restarts. Press enter to display the bash command prompt.
+
+13. Run the following command to connect to the MongoDB service:
+
+    ```bash
+    mongo
+    ```
+
+14. At the **>** prompt, run the following commands. These commands create a new user named **administartor** that has administrative and monitoring rights over the database server:
+
+    ```mongosh
+    use admin
+    db.createUser(
+        {
+            user: "administrator",
+            pwd: "Pa55w.rd",
+            roles: [
+                { role: "userAdminAnyDatabase", db: "admin" },
+                { role: "clusterMonitor", db:"admin" },
+                "readWriteAnyDatabase"
+            ]
+        }
+    )
+    ```
+
+15. Run the following commands to create another user named **deviceadmin** for a database named **DeviceData**. After running the `db.shutdownserver();` command you will receive some errors which you can ignore:
 
     ```mongosh
     use DeviceData;
@@ -162,25 +198,31 @@ In the first exercise, you'll create the MongoDB database for holding the data c
     exit;
     ```
 
-13. Run the following command restart the mongodb service. Verify that the service restarts without any error messages, and is listening on port 27017:
+16. At the bash prompt, close the bash shell running as the **mongodb** user:
 
     ```bash
-    sudo /opt/bitnami/ctlscript.sh start
+    exit
     ```
 
-14. Run the following command to verify that you can now log in to mongodb as the deviceadmin user:
+17. Run the following command restart the mongodb service. Verify that the service restarts without any error messages, and is listening on port 27017:
+
+    ```bash
+    sudo service mongod start
+    ```
+
+18. Run the following command to verify that you can now log in to mongodb as the deviceadmin user:
 
     ```bash
     mongo -u "deviceadmin" -p "Pa55w.rd" --authenticationDatabase DeviceData
     ```
 
-15. At the **>** prompt, run the following command to quit the mongo shell:
+19. At the **>** prompt, run the following command to quit the mongo shell:
 
     ```mongosh
     exit;
     ```
 
-16. At the **bitnami@mongodbserver** prompt, type the following command to disconnect from the MongoDB server and return to the Cloud Shell:
+20. At the bash prompt, run the following command to disconnect from the MongoDB server and return to the Cloud Shell:
 
     ```bash
     exit
@@ -295,7 +337,7 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
 ### Task 1: Create a Cosmos Account and Database
 
 1. Return to the Azure portal.
-2. In the left pane, click **+ Create a resource**.
+2. In the hamburger menu, click **+ Create a resource**.
 3. On the **New** page, in the **Search the Marketplace** box, type ***Azure Cosmos DB**, end then press Enter.
 4. On the **Azure Cosmos DB** page, click **Create**.
 5. On the **Create Azure Cosmos DB Account** page, enter the following settings, and then click **Review + create**:
@@ -311,11 +353,10 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
     | Multi-region Writes | Disable |
 
 6. On the validation page, click **Create**, and wait for the Cosmos DB account to be deployed.
-7. In the left-hand pane, click **Azure Cosmos DB**.
-8. On the **Azure Cosmos DB** page, click your Cosmos DB account (**mongodb*nnn***).
-9. On the **mongodb*nnn*** page, click **Data Explorer**.
-10. In the **Data Explorer** pane, click **New Collection**.
-11. In the **Add Collection** pane, specify the following settings, and then click **OK**:
+7. In the hamburger menu of the Azure portal, click **All resources**, and then click your new Cosmos DB account (**mongodb*nnn***).
+8. On the **mongodb*nnn*** page, click **Data Explorer**.
+9. In the **Data Explorer** pane, click **New Collection**.
+10. In the **Add Collection** pane, specify the following settings, and then click **OK**:
 
     | Property  | Value  |
     |---|---|
@@ -323,35 +364,39 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
     | Provision database throughput | selected |
     | Throughput | 1000 |
     | Collection id | Temperatures |
-    | Shard Key | deviceID |
+    | Storage capacity | Unlimited |
+    | Shard key | deviceID |
+    | My shard key is larger than 100 bytes | leave de-selected |
 
 ### Task 2: Create the Database Migration Service
 
-1. In the left-hand pane, click **All services**.
-2. On the **All services** page, click **Subscriptions**.
+1. In the hamburger menu of the Azure portal, click **All services**.
+2. In the **All services** search box, type **Subscriptions**, and then press Enter.
 3. On the **Subscriptions** page, click your subscription.
 4. On your subscription page, under **Settings**, click **Resource providers**.
 5. In the **Filter by name** box, type **DataMigration**, and then click **Microsoft.DataMigration**.
 6. Click **Register**, and wait for the **Status** to change to **Registered**. It might be necessary to click **Refresh** to see the status to change.
-7. In the left-hand pane, click **+ Create a resource**.
+7. In the hamburger menu of the Azure portal, click **+ Create a resource**.
 8. On the **New** page, in the **Search the Marketplace** box, type **Azure Database Migration Service**, and then press Enter.
 9. On the **Azure Database Migration Service** page, click **Create**.
-10. On the **Create Migration Service** page, enter the following settings, and then click **Create**:
+10. On the **Create Migration Service** page, enter the following settings, and then click **Next: Networking**:
 
     | Property  | Value  |
     |---|---|
-    | Service Name | MongoDBMigration |
     | Subscription | Select you subscription |
-    | Select a resource group | mongodbrg |
+    | Resource group | mongodbrg |
+    | Service Name | MongoDBMigration |
     | Location | Select the same location that you used previously |
-    | Virtual network | Click **Select or create virtual network**, select **databasevnet/default**, and then click **OK** |
+    | Service mode | Azure |
     | Pricing Tier | Standard: 1 vCores |
 
-11. Wait for the service to be deployed before continuing. This operation will take a few minutes.
+
+11. On the **Networking** page, select **databasevnet/default**,  **Review + create**
+12. Click **Create**, and wait for the service to be deployed before continuing. This operation will take a few minutes.
 
 ### Task 3: Create and Run a New Migration Project
 
-1. In the left-hand pane, click **Resource groups**.
+1. In the hamburger menu of the Azure portal, click **Resource groups**.
 2. In the **Resource groups** window, click **mongodbrg**.
 3. In the **mongodbrg** window, click **MongoDBMigration**.
 4. On the **MongoDBMigration** page, click **+ New Migration Project**.
@@ -370,9 +415,11 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
     |---|---|
     | Mode | Standard mode |
     | Source server name | Specify the value of the **mongodbserver-ip** IP address that you recorded earlier |
-    | User Name | root |
-    | Password | Enter the password of the root user on the mongodbserver VM that you noted earlier (from the bitnami_credentials file) |
+    | Server port | 27017 |
+    | User Name | administrator |
+    | Password | Pa55w.rd) |
     | Require SSL | Leave blank |
+    | My server has TLS 1.2 enabled | select |
 
 7. On the **Migration details details** page, enter the following details, and then click **Save**:
 
@@ -402,15 +449,15 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
     | Shard Key | deviceID |
     | Unique | Leave blank |
 
-10. On the **Migration summary** page, in the **Activity name** field, enter **mongodb-migration**, select **Boost RU during initial data copy**, and then click **Run migration**.
-11. On the **mongodb-migration** page, click **Refresh** every 30 seconds, until the migration has completed. Note the number of documents migrated.
+10. On the **Migration summary** page, in the **Activity name** field, enter **mongodb-migration**, select **Boost RU during migration**, and then click **Run migration**.
+11. On the **mongodb-migration** page, click **Refresh** every 30 seconds, until the migration has completed. Note the number of documents processed.
 
 ### Task 4: Verify that Migration was Successful
 
-1. In the left-hand pane, click **Azure Cosmos DB**.
-2. On the **Azure Cosmos DB** page, click **mongodb*nnn***.
+1. In the lhamburger menu of the Azure portal, click **All Resources**.
+2. On the **All resources** page, click **mongodb*nnn***.
 3. On the **mongodb*nnn** page, click **Data Explorer**.
-4. In the **Data Explorer** pane, expand the **Temperatures** database, and then click **Documents**.
+4. In the **Data Explorer** pane, expand the **DeviceData** database, expand the **Temperatures** collection, and then click **Documents**.
 5. In the **Documents** pane, scroll through the list of documents. You should see a document id (**_id**) and the shard key (**/deviceID**) for each document.
 6. Click any document. You should see the details of the document displayed. A typical document looks like this:
 
@@ -444,13 +491,6 @@ The next step is to take the MongoDB database and transfer it to Cosmos DB.
 
 The final step is to reconfigure your existing MongoDB applications to connect to Cosmos DB, and verify that they operate as before. This process requires you to modify the way in which your applications connect to the database, but the logic of your applications should remain unchanged.
 
-### Task 1: Enable MongoDB Aggregation Support
-
-1. In the **mongodb*nnn*** pane, under **Settings**, click **Preview Features**.
-2. Next to **Aggregation Pipeline**, click **Enable**. Wait while the aggregation pipeline is enabled. This feature adds support for MongoDB aggregate and grouping operations to the Cosmos DB database. It may take several minutes before the aggregation pipeline becomes available. Refresh the browser window to see the latest status of the feature.
-
-### Task 2: Reconfigure the DeviceDataQuery Application
-
 1. In the **mongodb*nnn*** pane, under **Settings**, click **Connection String**.
 2. On the **mongodb*nnn* Connection String** page, make a note of the following settings:
 
@@ -475,9 +515,9 @@ The final step is to reconfigure your existing MongoDB applications to connect t
 
     | Setting  | Value  |
     |---|---|
-    | Address | The Host from the **mongodb*nnn* Connection String** page |
-    | Username | The Username from the **mongodb*nnn* Connection String** page |
-    | Password | The Primary Password from the **mongodb*nnn* Connection String** page |
+    | Address | The **Host** from the **mongodb*nnn* Connection String** page |
+    | Username | The **Username** from the **mongodb*nnn* Connection String** page |
+    | Password | The **Primary Password** from the **mongodb*nnn* Connection String** page |
 
     The completed file should look similar to this:
 
@@ -489,7 +529,7 @@ The final step is to reconfigure your existing MongoDB applications to connect t
             <add key="Collection" value="Temperatures" />
 
             <!-- Settings for MongoDB -->
-            <!--add key="Address" value="168.63.99.236" />
+            <!--add key="Address" value="nn.nn.nn.nn" />
             <add key="Port" value="27017" />
             <add key="Username" value="deviceadmin" />
             <add key="Password" value="Pa55w.rd" /-->
@@ -563,13 +603,13 @@ You have successfully migrated a MongoDB database to Cosmos DB, and reconfigured
 ## Exercise 5: Clean Up
 
 1. Return to the Azure portal.
-2. In the left-hand pane, click **Resource groups**.
+2. In the hamburger menu, click **Resource groups**.
 3. In the **Resource groups** window, click **mongodbrg**.
 4. Click **Delete resource group**.
 5. On the **Are you sure you want to delete "mongodbrg"** page, in the **Type the resource group name** box, enter **mongodbrg**, and then click **Delete**.
 
 ---
-© 2019 Microsoft Corporation. All rights reserved.
+© 2020 Microsoft Corporation. All rights reserved.
 
 The text in this document is available under the [Creative Commons Attribution 3.0 License](https://creativecommons.org/licenses/by/3.0/legalcode), additional terms may apply. All other content contained in this document (including, without limitation, trademarks, logos, images, etc.) are **not** included within the Creative Commons license grant. This document does not provide you with any legal rights to any intellectual property in any Microsoft product. You may copy and use this document for your internal, reference purposes.
 
