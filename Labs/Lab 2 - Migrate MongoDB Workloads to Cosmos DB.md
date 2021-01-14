@@ -60,7 +60,7 @@ In the first exercise, you'll create the MongoDB database for holding the data c
 
 11. On the **IP Addresses** page, select the **default** subnet, and then click **Next: Security**.
 
-12. On the **Security** page, verify that **DDoS protection** is set to **Basic**, and **Firewall** is set to **Disabled**. Click **Review * create**.
+12. On the **Security** page, verify that **DDoS protection** is set to **Disabled**, and **Firewall** is set to **Disabled**. Click **Review * create**.
 
 13. On the **Create virtual network** page, click **Create**. Wait for the virtual network to be created before continuing.
 
